@@ -1,0 +1,124 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .HEAD {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .HEAD h3 {
+      color: #333;
+      font-size: 2rem;
+    }
+
+    .card {
+      width: 80%;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .images {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .img-box {
+      flex: 1 1 200px; /* minimum width */
+      width: 200px;    /* portrait narrow */
+      height: 300px;   /* taller for portrait */
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .bg1 {
+      background-image: url("ph1.jpg");
+    }
+
+    .bg2 {
+      background-image: url("ph2.jpg");
+    }
+
+    p {
+      color: #555;
+      line-height: 1.6;
+      font-size: 1.1rem;
+      text-align: justify;
+    }
+
+    /* ✅ Tablet */
+    @media (max-width: 768px) {
+      .card {
+        width: 90%;
+        padding: 15px;
+      }
+      .img-box {
+        width: 180px;
+        height: 260px;
+      }
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    /* ✅ Mobile */
+    @media (max-width: 480px) {
+      .HEAD h3 {
+        font-size: 1.5rem;
+      }
+      .images {
+        flex-direction: column;
+        align-items: center;
+      }
+      .img-box {
+        width: 70%;  /* center aligned portrait */
+        height: 280px;
+      }
+      p {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="HEAD">
+    <h3>DATA SCIENCE</h3>
+  </div>
+
+  <div class="card">
+    <div class="images">
+      <div class="img-box bg1"></div>
+      <div class="img-box bg2"></div>
+    </div>
+
+    <p>
+      The Internshala Data Science Course is an online training program that introduces learners to Python programming, 
+      SQL, statistics, data visualization, and machine learning. The course emphasizes practical learning through 
+      interactive lessons, quizzes, and real-world projects. On completion, learners earn a certificate, and the 
+      advanced placement guarantee track also provides career guidance, interview preparation, and job assistance 
+      in the field of data science.
+    </p>
+  </div>
+</body>
+</html>

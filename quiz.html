@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz Quest — HTML/CSS/JS</title>
+  <style>
+    :root{
+      --bg:#0e1326;--panel:#121a35;--text:#e7ecff;--muted:#9aa4bf;--accent:#7aa2ff;--accent-2:#8ef0c2;--danger:#ff6b6b;--ok:#6ee7a8;--warn:#ffd166;--radius:18px
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:radial-gradient(1200px 800px at 10% -10%,#1a2348 0,#0e1326 45%,#0e1326 100%);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif}
+    .wrap{max-width:920px;margin:0 auto;padding:24px}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#9b7aff);display:grid;place-items:center;box-shadow:0 10px 30px rgba(122,162,255,.25)}
+    .logo span{font-weight:900;}
+    h1{font-size:20px;margin:0}
+    .card{border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);border-radius:var(--radius);box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .card .hd{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center; border-top-left-radius: 14px;border-top-right-radius: 14px;  justify-content:space-between;color:#cbd6ff}
+    .card .bd{padding:16px}
+
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:1px solid #2a375e;background:#101836;color:var(--text);border-radius:999px;padding:10px 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;transition:.2s;font-weight:600}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+    .primary{background:linear-gradient(135deg,var(--accent),#9b7aff);border-color:transparent;color:#0a0f1e}
+    .ghost{background:transparent}
+    .danger{background:linear-gradient(135deg,#ff9a9e,#fecfef);color:#3a0a0a;border-color:transparent}
+    .ok{background:linear-gradient(135deg,#6ee7a8,#a7f3d0);color:#063b2d;border-color:transparent}
+
+    .progress{height:10px;background:#131b38;border-radius:999px;overflow:hidden}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#9b7aff);transition:width .3s ease}
+
+    .q{font-size:20px;font-weight:700;color:#dfe7ff}
+    .meta{color:var(--muted);font-size:14px}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    .opt{display:flex;gap:10px;align-items:stretch;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;background:#0f1733;cursor:pointer;transition:.15s;position:relative; color: white;}
+    .opt:focus{outline:2px solid #5c7cff;outline-offset:2px}
+    .opt:hover{transform:translateY(-1px); color:rgb(208, 206, 206)}
+    .opt[data-state="correct"]{border-color:#2bd67b;background:rgba(107,235,169,.08)}
+    .opt[data-state="wrong"]{border-color:#ff6b6b;background:rgba(255,107,107,.08)}
+    .opt .idx{min-width:34px;height:34px;border-radius:10px;background:#162048;display:grid;place-items:center;font-weight:800}
+
+    .muted{color:var(--muted)}
+    .explain{margin-top:10px;padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.1);display:none}
+    .explain.show{display:block}
+
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px dashed rgba(255,255,255,.2);border-radius:999px;padding:6px 10px;color:#d9e3ff}
+
+    .center{display:grid;place-items:center;text-align:center;padding:48px 16px}
+    .big{font-size:40px;font-weight:900;letter-spacing:-.02em}
+    .score{font-variant-numeric:tabular-nums}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><span>❔</span></div>
+        <h1>Quiz Question</h1>
+      </div>
+      <div class="controls">
+        <button id="btnRestartTop" class="btn ghost">↻ Restart</button>
+        <button id="btnToggleTimer" class="btn ghost" title="Toggle per‑question timer">⏱️ Timer: <span id="timerState">Off</span></button>
+      </div>
+    </header>
+
+    <section id="screenStart" class="card">
+      <div class="hd"><span>Welcome</span><span class="meta"> Quiz Game</span></div>
+      <div class="bd center">
+        <div class="big" style="margin-bottom:8px">Ready to play?</div>
+        <p class="muted">10 questions || multiple choice  </p>
+        <div style="height:18px" aria-hidden="true"></div>
+        <button id="btnStart" class="btn primary">Start Quiz</button>
+      </div>
+    </section>
+
+    <section id="screenQuiz" class="card hidden" aria-live="polite">
+      <div class="hd">
+        <div class="row" style="width:100%">
+          <span id="qCounter">Question 1/10</span>
+          <div class="pill">Score: <span id="scoreTop" class="score">0</span></div>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="progress" aria-hidden="true"><div id="bar" class="bar"></div></div>
+        <div class="row" style="margin-top:10px">
+          <div class="meta">Category: <span id="qCategory">General</span></div>
+          <div class="meta">Time left: <span id="qTimer">—</span></div>
+        </div>
+        <div id="qText" class="q" style="margin-top:10px">Question text…</div>
+        <div id="opts" class="grid" role="group" aria-label="Answer choices"></div>
+        <div id="explain" class="explain"></div>
+        <div class="row" style="margin-top:12px">
+          <button id="btnNext" class="btn primary" disabled>Next →</button>
+          <div class="meta">Tip: press 1‑4 to choose, N for next.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenEnd" class="card hidden">
+      <div class="hd"><span>Results</span><span id="resultBadge" class="pill">—</span></div>
+      <div class="bd center">
+        <div class="big">Your score</div>
+        <div style="font-size:28px;margin:6px 0 10px" class="score"><span id="scoreFinal">0</span> / <span id="totalFinal">10</span></div>
+        <div class="muted">Best score on this device: <span id="bestScore">0</span></div>
+        <div style="height:12px"></div>
+        <div class="row center" style="justify-content:center">
+          <button id="btnRestart" class="btn ok">Play again</button>
+          <button id="btnShare" class="btn ghost">Share</button>
+          <button id="btnReview" class="btn ghost">Review answers</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenReview" class="card hidden">
+      <div class="hd"><span>Review Answers</span><button id="btnCloseReview" class="btn ghost">Close</button></div>
+      <div class="bd" id="reviewList"></div>
+    </section>
+  </div>
+
+  <script>
+    // ===== Question Bank =====
+    // Each item: { q, options: [a,b,c,d], answer: index(0-3), explain, category }
+    const BANK = [
+      
+     { q:"Which attribute is used to display an image in HTML?", options:["src","href","alt","link"], answer:0, explain:"source", category:"HTML" },
+     {q: "What does HTTP stand for?", options: ["Hyper Text Transfer Protocol", "Hyper Tool Transfer Protocol", "Hyper Text Transmission Protocol", "High Text Transfer Protocol"], answer: 0},
+  {q: "Which data structure uses FIFO?", options: ["Stack", "Queue", "Tree", "Graph"], answer: 1},
+ {q: "Which of these is not a programming paradigm?", options: ["Object-Oriented", "Procedural", "Functional", "Hierarchical"], answer: 3},
+ {q: "What is the full form of DNS?", options: ["Domain Name System", "Domain Network Service", "Direct Name Service", "Domain Number System"], answer: 0},
+ {q: "Which tag is used for the largest heading in HTML?", options: ["<h1>", "<h6>", "<head>", "<header>"], answer: 0},
+ {q: "Which company developed the Java programming language?", options: ["Sun Microsystems", "Microsoft", "Google", "Apple"], answer: 0},
+  {q: "Which is the smallest unit of data in a computer?", options: ["Byte", "Bit", "Nibble", "Word"], answer: 1},
+ {q: "What is the main function of ALU in CPU?", options: ["Store data", "Perform arithmetic and logic operations", "Control operations", "Input data"], answer: 1},
+  {q: "Which of these is a backend programming language?", options: ["HTML", "CSS", "Python", "Bootstrap"], answer: 2},
+  
+  {q: "Which of these is a frontend framework?", options: ["React", "Django", "Flask", "Node.js"], answer: 0},
+  {q: "What is a pointer in C language?", options: ["A variable that stores an address", "A variable that stores a value", "A function", "A type of array"], answer: 0},
+ {q: "Which of the following is not an operating system?", options: ["Windows", "Linux", "Oracle", "MacOS"], answer: 2},
+  {q: "Which is the correct way to start a Python program?", options: ["#start", "main()", "def main():", "print()"], answer: 2},
+  {q: "Which of the following is a relational database?", options: ["MongoDB", "MySQL", "Cassandra", "Neo4j"], answer: 1},
+      { q:"What does CSS stand for?", options:["Cascading Style Sheets","Computer Styling System","Creative Style Syntax","Coded Style Sheet"], answer:0, explain:"CSS = Cascading Style Sheets.", category:"Web" },
+      { q:"Which method adds an element to the end of a JavaScript array?", options:["push()","add()","append()","insert()"], answer:0, explain:"array.push(item) appends to the end.", category:"JavaScript" },
+      { q:"Which CSS property is used to change the background color?", options:["bgcolor","background-color","color-backgroung","background"], answer:1, explain:"background-color", category:"css" },
+      { q:"Which function is used to display an alert box?", options:["alertBox()","showAlert()","msg()","alert()"], answer:3, explain:"alert()", category:"JavaScript" },
+      { q:"Which property is used to change text color in CSS?", options:["text-style","font-color","color","text-color"], answer:2, explain:"CSS uses /* ... */ block comments.", category:"CSS" },
+      { q:"Which keyword creates a constant in JavaScript?", options:["let","const","var","static"], answer:1, explain:"const declares a read-only binding.", category:"JavaScript" },
+      { q:"Which operator is used to compare both value and type?", options:["==","!=","===","="], answer:2, explain:"===  is used to compare both value and type", category:"JavaScript" },
+      { q:"What is the output of: Boolean(0) in JS?", options:["0","1","true","false"], answer:3, explain:"0 is falsy, so Boolean(0) is false.", category:"JavaScript" },
+      { q:"Which property controls text size in CSS?", options:["font-weight","text-size","font-size","size"], answer:2, explain:"Use font-size to adjust text size.", category:"CSS" },
+      { q:"Which HTTP status code means 'Not Found'?", options:["200","301","404","500"], answer:2, explain:"404 indicates the resource was not found.", category:"Web" },
+      { q:"What does DOM stand for?", options:["Document Object Model","Data Object Module","Dynamic Output Mechanism","Document Oriented Map"], answer:0, explain:"DOM = Document Object Model.", category:"Web" },
+      { q:"Which CSS layout uses rows and columns with areas?", options:["Flexbox","Floats","Grid","Positioning"], answer:2, explain:"CSS Grid supports 2D layouts.", category:"CSS" },
+      { q:"Which array method returns a new array with elements that pass a test?", options:["map()","filter()","reduce()","find()"], answer:1, explain:"filter() selects items by predicate.", category:"JavaScript" },
+      { q:"Which CSS property is used to change font style (like italic)?", options:["font-weight","font-style","font-family","text-decoration"], answer:1, explain:"This property specifically controls the slant of the text.", category:"CSS" },
+      { q:"Which HTML attribute is used to provide alternative text for images?", options:["title","src","alt","aria"], answer:2, explain:"alt describes the image for accessibility.", category:"Web" },
+      { q:"Which CSS unit scales with root font size?", options:["px","%","em","rem"], answer:3, explain:"rem is relative to the root font size.", category:"CSS" },
+      { q:"Which keyword stops a loop in JS?", options:["stop","break","exit","halt"], answer:1, explain:"break exits loops/switch.", category:"JavaScript" },
+        {q: "What does CPU stand for?", options: ["Central Process Unit", "Central Processing Unit", "Computer Personal Unit", "Central Power Unit"], answer: 1, explain:"Central Processing Unit"},
+         {q: "What does RAM stand for?", options: ["Random Access Memory", "Read Access Memory", "Run Access Memory", "Read and Modify"], answer: 0, explain:"Random Access Memory"},
+       {q:"What will typeof null return in JavaScript?", options:["null","undefined","object","boolean"], answer:2, explain:"you can not define", category:"JavaSceipt"},
+     {q:"Which keyword is used to declare a variable in JavaScript (modern)?", options:["var","let","int","declare"], answer:1, explain:" declare variables with block-level scope.", category:"JavaSceipt"},
+     {q:"Which method is used to display data in the browser console?", options:["console.print()","console.log()","print.console()","log.console()"], answer:1, explain:"you can not define", category:"JavaSceipt"},
+      {q:"Which CSS positioning makes an element stay fixed on the screen even when scrolling?", options:["relative","absolute","fixed","sataic"], answer:2, explain:"fixed", category:"CSS"},
+
+    ];
+
+    // ===== Helpers =====
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]);
+
+    const ui = {
+      start: $('#screenStart'), quiz: $('#screenQuiz'), end: $('#screenEnd'), review: $('#screenReview'),
+      qText: $('#qText'), qCounter: $('#qCounter'), qCategory: $('#qCategory'), opts: $('#opts'), explain: $('#explain'),
+      btnNext: $('#btnNext'), bar: $('#bar'), scoreTop: $('#scoreTop'), qTimer: $('#qTimer'),
+      scoreFinal: $('#scoreFinal'), totalFinal: $('#totalFinal'), bestScore: $('#bestScore'), resultBadge: $('#resultBadge'),
+      btnStart: $('#btnStart'), btnRestart: $('#btnRestart'), btnRestartTop: $('#btnRestartTop'), btnShare: $('#btnShare'), btnReview: $('#btnReview'), btnCloseReview: $('#btnCloseReview'),
+      timerState: $('#timerState'), btnToggleTimer: $('#btnToggleTimer'), reviewList: $('#reviewList'),
+    };
+
+    const TOTAL = 10; // number of questions per game
+    let questions = [];
+    let idx = 0; // current question index
+    let score = 0;
+    let chosen = null; // chosen option index
+    let allowAnswer = true;
+    let enableTimer = false;
+    let timer = null;
+    let timeLeft = 15; // seconds per question
+    const history = []; // store review data
+
+    function init(){
+      questions = shuffle(BANK).slice(0, TOTAL);
+      idx = 0; score = 0; chosen = null; allowAnswer = true; history.length = 0;
+      ui.scoreTop.textContent = score;
+      ui.totalFinal.textContent = TOTAL;
+      ui.bar.style.width = '0%';
+      show(ui.start); hide(ui.quiz); hide(ui.end); hide(ui.review);
+    }
+
+    function show(el){ el.classList.remove('hidden'); }
+    function hide(el){ el.classList.add('hidden'); }
+
+    function startGame(){
+      show(ui.quiz); hide(ui.start); hide(ui.end); hide(ui.review);
+      renderQuestion();
+    }
+
+    function renderQuestion(){
+      const q = questions[idx];
+      ui.qText.textContent = q.q;
+      ui.qCategory.textContent = q.category || 'General';
+      ui.qCounter.textContent = `Question ${idx+1}/${TOTAL}`;
+      ui.explain.classList.remove('show');
+      ui.explain.textContent = '';
+      ui.btnNext.disabled = true;
+      allowAnswer = true; chosen = null;
+      ui.opts.innerHTML = '';
+
+      const letters = ['A','B','C','D'];
+      q.options.forEach((text, i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'opt';
+        btn.setAttribute('role','button');
+        btn.setAttribute('aria-pressed','false');
+        btn.dataset.index = i;
+        btn.innerHTML = `<div class="idx">${letters[i]||i+1}</div><div>${text}</div>`;
+        btn.addEventListener('click', ()=>choose(i, btn));
+        ui.opts.appendChild(btn);
+      });
+
+      // progress bar
+      ui.bar.style.width = `${(idx)/TOTAL*100}%`;
+
+      // timer
+      stopTimer();
+      if (enableTimer){ startTimer(15); } else { ui.qTimer.textContent = '—'; }
+    }
+
+    function choose(i, elBtn){
+      if(!allowAnswer) return;
+      allowAnswer = false;
+      chosen = i;
+      const q = questions[idx];
+      const correct = q.answer;
+      const optNodes = $$('#opts .opt');
+      optNodes.forEach((node, k)=>{
+        const state = (k===correct) ? 'correct' : (k===i ? 'wrong' : '');
+        if(state) node.dataset.state = state;
+        node.setAttribute('aria-pressed', k===i ? 'true' : 'false');
+      });
+
+      const isRight = i===correct;
+      if(isRight) score++;
+      ui.scoreTop.textContent = score;
+      ui.explain.textContent = q.explain || '';
+      if(q.explain) ui.explain.classList.add('show');
+      ui.btnNext.disabled = false;
+      stopTimer();
+
+      history.push({
+        q: q.q, options: q.options, answer: correct, picked: i, explain: q.explain, category: q.category
+      });
+    }
+
+    function next(){
+      if(idx < TOTAL-1){
+        idx++;
+        renderQuestion();
+      } else {
+        endGame();
+      }
+    }
+
+    function endGame(){
+      hide(ui.quiz); show(ui.end);
+      ui.bar.style.width = '100%';
+      ui.scoreFinal.textContent = score;
+      ui.totalFinal.textContent = TOTAL;
+      const pct = Math.round(score/TOTAL*100);
+      ui.resultBadge.textContent = pct>=80 ? '🏆 Excellent' : pct>=50 ? '👍 Good' : '💪 Keep practicing';
+      const best = Math.max(score, Number(localStorage.getItem('best_score')||0));
+      localStorage.setItem('best_score', best);
+      ui.bestScore.textContent = best;
+      stopTimer();
+    }
+
+    function startTimer(seconds){
+      timeLeft = seconds;
+      ui.qTimer.textContent = `${timeLeft}s`;
+      timer = setInterval(()=>{
+        timeLeft--; ui.qTimer.textContent = `${timeLeft}s`;
+        if(timeLeft<=0){
+          clearInterval(timer); timer=null;
+          // auto lock question, mark correct, proceed
+          allowAnswer = false;
+          const q = questions[idx];
+          const correct = q.answer;
+          const optNodes = $$('#opts .opt');
+          optNodes.forEach((node, k)=>{ node.dataset.state = (k===correct)?'correct':''; });
+          ui.explain.textContent = q.explain || 'Time\'s up!';
+          ui.explain.classList.add('show');
+          ui.btnNext.disabled = false;
+          history.push({ q: q.q, options: q.options, answer: correct, picked: null, explain: q.explain, category: q.category });
+        }
+      },1000);
+    }
+
+    function stopTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+
+    function toggleTimer(){
+      enableTimer = !enableTimer;
+      ui.timerState.textContent = enableTimer ? 'On' : 'Off';
+    }
+
+    function share(){
+      const text = `I scored ${score}/${TOTAL} in Quiz Quest!`;
+      if(navigator.share){ navigator.share({ text }); }
+      else{
+        navigator.clipboard.writeText(text).then(()=>alert('Copied score to clipboard!'));
+      }
+    }
+
+    function review(){
+      ui.reviewList.innerHTML = '';
+      history.forEach((h, i)=>{
+        const box = document.createElement('div');
+        box.className='bd';
+        const letters=['A','B','C','D'];
+        const picked = h.picked==null ? '—' : `${letters[h.picked]}: ${h.options[h.picked]}`;
+        const correct = `${letters[h.answer]}: ${h.options[h.answer]}`;
+        box.innerHTML = `
+          <div style="font-weight:700;margin-bottom:6px">Q${i+1}. ${h.q}</div>
+          <div class="meta">Category: ${h.category||'General'}</div>
+          <div style="margin-top:6px">
+            <div class="pill" style="margin-right:6px">You: ${picked}</div>
+            <div class="pill">Correct: ${correct}</div>
+          </div>
+          ${h.explain?`<div class="explain show" style="margin-top:8px">${h.explain}</div>`:''}
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0" />
+        `;
+        ui.reviewList.appendChild(box);
+      });
+      hide(ui.end); show(ui.review);
+    }
+
+    // ===== Events =====
+    ui.btnStart.addEventListener('click', startGame);
+    ui.btnNext.addEventListener('click', next);
+    ui.btnRestart.addEventListener('click', init);
+    ui.btnRestartTop.addEventListener('click', init);
+    ui.btnShare.addEventListener('click', share);
+    ui.btnReview.addEventListener('click', review);
+    ui.btnCloseReview.addEventListener('click', ()=>{ hide(ui.review); show(ui.end); });
+    ui.btnToggleTimer.addEventListener('click', toggleTimer);
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e)=>{
+      if(ui.quiz.classList.contains('hidden')) return;
+      const num = parseInt(e.key,10);
+      if(num>=1 && num<=4){ const btn = ui.opts.querySelectorAll('.opt')[num-1]; btn && btn.click(); }
+      if(e.key==='n' || e.key==='N' || e.key==='Enter'){ if(!ui.btnNext.disabled) next(); }
+    });
+
+    // Boot
+    (function(){
+      const best = Number(localStorage.getItem('best_score')||0);
+      ui.bestScore.textContent = best;
+      init();
+    })();
+  </script>
+</body>
+</html>

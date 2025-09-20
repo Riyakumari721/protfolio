@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white shadow-xl rounded-2xl w-full max-w-lg p-8">
+    <h2 class="text-3xl font-bold text-center text-purple-600 mb-6">⏰ To-Do List</h2>
+
+    <!-- Input -->
+    <div class="space-y-3 mb-6">
+      <input id="taskInput" type="text" placeholder="Enter your task..."
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+
+      <input id="taskTime" type="datetime-local"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+
+      <button id="addBtn"
+        class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-purple-600 hover:to-blue-600 transition">
+        Add Task
+      </button>
+    </div>
+
+    <!-- Task list -->
+    <ul id="taskList" class="space-y-3"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById("taskInput");
+    const taskTime = document.getElementById("taskTime");
+    const addBtn = document.getElementById("addBtn");
+    const taskList = document.getElementById("taskList");
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      const timeValue = taskTime.value;
+
+      if (!text || !timeValue) {
+        alert("⚠️ Please enter both task and time!");
+        return;
+      }
+
+      const dueDate = new Date(timeValue);
+
+      const li = document.createElement("li");
+      li.className = "flex justify-between items-center bg-gray-50 px-4 py-3 rounded-lg shadow-sm border border-gray-200";
+
+      const taskWrapper = document.createElement("div");
+
+      const span = document.createElement("span");
+      span.textContent = text;
+      span.className = "text-gray-800 font-medium block";
+
+      const time = document.createElement("small");
+      time.textContent = "📅 Due: " + dueDate.toLocaleString();
+      time.className = "text-gray-500 text-xs";
+
+      taskWrapper.appendChild(span);
+      taskWrapper.appendChild(time);
+
+      const btns = document.createElement("div");
+      btns.className = "space-x-2";
+
+      // Done button
+      const doneBtn = document.createElement("button");
+      doneBtn.textContent = "Done";
+      doneBtn.className = "bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition";
+      doneBtn.onclick = () => {
+        span.classList.toggle("line-through");
+        span.classList.toggle("text-gray-400");
+        li.classList.toggle("bg-green-50");
+      };
+
+      // Delete button
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.className = "bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition";
+      delBtn.onclick = () => {
+        li.remove();
+      };
+
+      btns.appendChild(doneBtn);
+      btns.appendChild(delBtn);
+
+      li.appendChild(taskWrapper);
+      li.appendChild(btns);
+      taskList.appendChild(li);
+
+      // Reminder set
+      const now = new Date();
+      const delay = dueDate.getTime() - now.getTime();
+
+      if (delay > 0) {
+        setTimeout(() => {
+          alert("⏰ Reminder: " + text + " (Due now!)");
+        }, delay);
+      }
+
+      taskInput.value = "";
+      taskTime.value = "";
+    }
+
+    addBtn.addEventListener("click", addTask);
+    taskInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") addTask();
+    });
+  </script>
+</body>
+</html>

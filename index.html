@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riya Kumari</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+ 
+
+    body {
+      background: #f5f5f5;
+      color: #333;
+    }
+    header {
+      background: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2.5rem;
+    }
+    header p {
+      margin: 5px 0;
+    }
+    nav {
+      margin-top: 10px;
+    }
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #f5f5f5;
+      font-weight: bold;
+    }
+    section {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+    .about, .skills, .projects, .contact, .course {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .my-photo {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: url('https://via.placeholder.com/150') no-repeat center center/cover;
+      margin: 0 auto 20px;
+       background-image:url(my.jpg) ;
+    }
+    .about p {
+      line-height: 1.6;
+      text-align: center;
+    }
+    .skills ul, .projects ul, .course ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .skills li, .projects li, .course li {
+      margin: 10px;
+      padding: 10px 15px;
+      background: #333;
+      color: #fff;
+      border-radius: 5px;
+    }
+    .projects a {
+      text-decoration: none;
+      color: #fff;
+    }
+    .course a {
+      text-decoration: none;
+      color: #fff;
+    }
+    .contact p {
+      margin: 8px 0;
+      text-align: center;
+    }
+    footer {
+      background: #333;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      margin-top: 20px;
+    }
+        /* ===== Responsive Design ===== */
+    @media (max-width: 768px) {   /* Tablet aur medium screens ke liye */
+      header h1 {
+        font-size: 1.8rem;
+      }
+      header p {
+        font-size: 0.95rem;
+      }
+      .my-photo {
+        width: 180px;
+        height: 180px;
+      }
+      .skills li, .projects li {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+    } /* 👈 Yeha pe tablet ke liye responsive design khatam hota hai */
+
+    @media (max-width: 480px) {   /* Mobile screens ke liye */
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+      nav a {
+        font-size: 0.85rem;
+        margin: 4px;
+      }
+      section {
+        padding: 20px 10px;
+      }
+      h2 {
+        font-size: 1.3rem;
+      }
+      .my-photo {
+        width: 140px;
+        height: 140px;
+      }
+      .skills li, .projects li {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
+      .contact p {
+        font-size: 0.9rem;
+      }
+    } /* 👈 Yeha pe mobile ke liye responsive design khatam hota hai */
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Riya Kumari</h1>
+    <p>Web Developer | Frontend </p>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#skills"> Technical Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#course">Course & Internship</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section id="about" class="about">
+    <div class="my-photo"></div>
+    <h2>About Me</h2>
+    <p>
+      Hi, I'm Riya Kumari, a BCA 3rd-year student at ICFAI University, Dehradun.  Im passionate web developer who loves building interactive and user-friendly web applications.  
+I work with HTML, CSS, JavaScript, Python, MySql, Bootstrap and , Tailwind CSS  to design and develop projects that are both functional and visually appealing.  
+
+Here are some of the projects I have worked on:  
+
+- **Calculator App** – A clean and responsive calculator that performs arithmetic operations. It is built using HTML, CSS, and JavaScript to demonstrate my frontend design and logic-building skills.  
+
+- **Weather Check App** – A web application that fetches real-time weather data using a weather API. It allows users to search for any city and instantly get details like temperature, humidity, and weather conditions. This project helped me understand working with APIs and JSON data.  
+
+- **Quiz Game** – An interactive quiz game built with HTML, CSS, and JavaScript. It asks multiple-choice questions, evaluates answers, and shows the score at the end. This project improved my skills in DOM manipulation, event handling, and user interaction design.  
+
+I am eager to keep learning new technologies and aim to become a full-stack developer capable of creating impactful and scalable web applications.  
+
+    </p>
+  </section>
+
+  <section id="skills" class="skills">
+    <h2>Skills</h2>
+    <ul>
+      <li>HTML</li>
+      <li>CSS</li>
+      <li>JavaScript</li>
+      <li>Python</li>
+      <li>MySql</li>
+      <li>Bootstrap</li>
+      <li>Tailwind CSS</li>
+    </ul>
+  </section>
+
+  <section id="projects" class="projects">
+    <h2>Projects</h2>
+    <ul>
+      <li><a href="calculator.html">Calculator</a></li>
+      <li><a href="temprature.html">Weather Check App</a></li>
+      <li><a href="quiz.html">Quiz Game</a></li>
+      <li><a href="todo list.html">To-Do list</a></li>
+    </ul>
+  </section>
+   <section id="course" class="course">
+    <h2>Course & Internship</h2>
+    <ul>
+      <li><a href="course.html">course</a></li>
+      <li><a href="internship.html">internship</a></li>
+    </ul>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact</h2>
+    <p>Phone: 8653679108</p>
+    <p>Email: <a href="mailto:riya721301@gmail.com">riya721301@gmail.com</a></p>
+        <p>GitHub: <a href="https://github.com/Riyakumari721" target="_blank">github.com/Riyakumari721</a></p>
+    <p>Linkdin: <a href="https://www.linkedin.com/in/riya-kumari-66b0312a4" target="_blank">linkedin.com/Riya kumari</a></p>
+  </section>
+
+  <footer>
+    <H1>Thanks</H1>
+  </footer>
+</body>
+</html>
